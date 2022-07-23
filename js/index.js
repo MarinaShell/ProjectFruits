@@ -13,59 +13,111 @@ const addActionButton = document.querySelector('.add__action__btn'); // кноп
 
 // список фруктов в JSON формате
 let fruitsJSON = `[
-  {"kind": "Мангустин", "color": "фиолетовый", "weight": 13},
-  {"kind": "Дуриан", "color": "зеленый", "weight": 35},
-  {"kind": "Личи", "color": "розово-красный", "weight": 17},
-  {"kind": "Карамбола", "color": "желтый", "weight": 28},
-  {"kind": "Тамаринд", "color": "светло-коричневый", "weight": 22}
+  {"index": "0", "kind": "Мангустин", "color": "фиолетовый", "weight": 13},
+  {"index": "1","kind": "Дуриан", "color": "зеленый", "weight": 35},
+  {"index": "2","kind": "Личи", "color": "розово-красный", "weight": 17},
+  {"index": "3","kind": "Карамбола", "color": "желтый", "weight": 28},
+  {"index": "4","kind": "Тамаринд", "color": "светло-коричневый", "weight": 22}
 ]`;
 
-// преобразование JSON в объект JavaScript
+/*****************************************************************************/
+/* преобразование JSON в объект JavaScript*/
 let fruits = JSON.parse(fruitsJSON);
 
 /*** ОТОБРАЖЕНИЕ ***/
 
-// отрисовка карточек
+/*****************************************************************************/
+/*список классов для фруктов*/
+let arrayClass = ["fruit__item fruit_violet", 
+                  "fruit__item fruit_green",
+                  "fruit__item fruit_carmazin",
+                  "fruit__item fruit_yellow",
+                  "fruit__item fruit_lightbrown"
+                ]
+/*****************************************************************************/
+/* отрисовка карточек */
 const display = () => {
-  // TODO: очищаем fruitsList от вложенных элементов,
-  // чтобы заполнить актуальными данными из fruits
+   //fruitsList.removeChild(li);
 
-  for (let i = 0; i < fruits.length; i++) {
-    // TODO: формируем новый элемент <li> при помощи document.createElement,
-    // и добавляем в конец списка fruitsList при помощи document.appendChild
-  }
+
+   for (let i = 0; i < fruits.length; i++) {
+    const {index, kind, color, weight} = fruits[i];
+    let li = document.createElement('li');
+    li.className = arrayClass[index];
+    let div = document.createElement('div');
+    div.className = "fruit__info";
+    
+    let div_index = document.createElement('div');
+    div_index.innerHTML = "index: "+ index;
+    
+    let div_kind = document.createElement('div');
+    div_kind.innerHTML = "kind " + kind;
+    
+    let div_color = document.createElement('div');
+    div_color.innerHTML = "color " + color;
+
+    let div_weight = document.createElement('div');
+    div_weight.innerHTML = "weight " + weight;
+
+    div.appendChild(div_index);
+    div.appendChild(div_kind);
+    div.appendChild(div_color);
+    div.appendChild(div_weight);
+    li.appendChild(div);
+    fruitsList.appendChild(li);
+   }
 };
 
-// первая отрисовка карточек
+/*****************************************************************************/
+/* первая отрисовка карточек */
 display();
 
-/*** ПЕРЕМЕШИВАНИЕ ***/
+/***************************ПЕРЕМЕШИВАНИЕ*************************************/
 
-// генерация случайного числа в заданном диапазоне
+/*****************************************************************************/
+/*генерация случайного числа в заданном диапазоне*/
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+/*****************************************************************************/
 // перемешивание массива
-const shuffleFruits = () => {
+shuffleFruits = () => {
   let result = [];
 
-  // ATTENTION: сейчас при клике вы запустите бесконечный цикл и браузер зависнет
+  let i = 0;
   while (fruits.length > 0) {
-    // TODO: допишите функцию перемешивания массива
-    //
-    // Подсказка: находим случайный элемент из fruits, используя getRandomInt
-    // вырезаем его из fruits и вставляем в result.
-    // ex.: [1, 2, 3], [] => [1, 3], [2] => [3], [2, 1] => [], [2, 1, 3]
-    // (массив fruits будет уменьшатся, а result заполняться)
+    let el = getRandomInt(0,fruits.length-1);
+    console.log(el);
+    result.splice(i,1,fruits[el]);
+    fruits.splice(el,1);
+    i++;
   }
-
   fruits = result;
+
+  /*проверяем, изменился ли массив*/
+  let res = 0;
+  for (let i = 0; i<fruits.length;i++)
+  {
+    const {index, ...arr} = fruits[i];
+    if (index == i)
+      res++;
+  }
+  
+  if (res==5)
+    return false; 
+  else
+    return true;
 };
 
+/*****************************************************************************/
+/*нажатие кнопки Перемешать*/
 shuffleButton.addEventListener('click', () => {
-  shuffleFruits();
-  display();
+  let res = shuffleFruits();
+  if (res)
+    display();
+  else
+     alert("порядок не изменился"); 
 });
 
 /*** ФИЛЬТРАЦИЯ ***/
