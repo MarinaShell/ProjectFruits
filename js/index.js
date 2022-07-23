@@ -2,6 +2,7 @@
 const fruitsList = document.querySelector('.fruits__list'); // список карточек
 const shuffleButton = document.querySelector('.shuffle__btn'); // кнопка перемешивания
 const filterButton = document.querySelector('.filter__btn'); // кнопка фильтрации
+const filterButtonClear = document.querySelector('.filter__btn__clear'); // кнопка фильтрации
 const sortKindLabel = document.querySelector('.sort__kind'); // поле с названием сортировки
 const sortTimeLabel = document.querySelector('.sort__time'); // поле с временем сортировки
 const sortChangeButton = document.querySelector('.sort__change__btn'); // кнопка смены сортировки
@@ -23,6 +24,7 @@ let fruitsJSON = `[
 /*****************************************************************************/
 /* преобразование JSON в объект JavaScript*/
 let fruits = JSON.parse(fruitsJSON);
+let fruitsForFilter = fruits;
 
 /*** ОТОБРАЖЕНИЕ ***/
 
@@ -32,18 +34,24 @@ let arrayClass = ["fruit__item fruit_violet",
                   "fruit__item fruit_green",
                   "fruit__item fruit_carmazin",
                   "fruit__item fruit_yellow",
-                  "fruit__item fruit_lightbrown"
+                  "fruit__item fruit_lightbrown", 
+                  "fruit__item fruit_new"
                 ]
 /*****************************************************************************/
 /* отрисовка карточек */
 const display = () => {
-   //fruitsList.removeChild(li);
+   
+   while (fruitsList.firstChild) {
+    fruitsList.removeChild(fruitsList.firstChild);
+  }
 
-
-   for (let i = 0; i < fruits.length; i++) {
+  for (let i = 0; i < fruits.length; i++) {
     const {index, kind, color, weight} = fruits[i];
     let li = document.createElement('li');
-    li.className = arrayClass[index];
+    let index_tmp = index;
+    if (index>=arrayClass.length)
+      index_tmp = arrayClass.length-1;
+    li.className = arrayClass[index_tmp];
     let div = document.createElement('div');
     div.className = "fruit__info";
     
@@ -51,13 +59,13 @@ const display = () => {
     div_index.innerHTML = "index: "+ index;
     
     let div_kind = document.createElement('div');
-    div_kind.innerHTML = "kind " + kind;
+    div_kind.innerHTML = "kind: " + kind;
     
     let div_color = document.createElement('div');
-    div_color.innerHTML = "color " + color;
+    div_color.innerHTML = "color: " + color;
 
     let div_weight = document.createElement('div');
-    div_weight.innerHTML = "weight " + weight;
+    div_weight.innerHTML = "weight: " + weight;
 
     div.appendChild(div_index);
     div.appendChild(div_kind);
@@ -65,7 +73,7 @@ const display = () => {
     div.appendChild(div_weight);
     li.appendChild(div);
     fruitsList.appendChild(li);
-   }
+  }
 };
 
 /*****************************************************************************/
@@ -88,7 +96,6 @@ shuffleFruits = () => {
   let i = 0;
   while (fruits.length > 0) {
     let el = getRandomInt(0,fruits.length-1);
-    console.log(el);
     result.splice(i,1,fruits[el]);
     fruits.splice(el,1);
     i++;
@@ -120,21 +127,38 @@ shuffleButton.addEventListener('click', () => {
      alert("порядок не изменился"); 
 });
 
-/*** ФИЛЬТРАЦИЯ ***/
+//******************************* ФИЛЬТРАЦИЯ *********************************/
 
-// фильтрация массива
+/*****************************************************************************/
+/* фильтрация массива */
 const filterFruits = () => {
-  fruits.filter((item) => {
-    // TODO: допишите функцию
+  const minweightInput = document.getElementById('btnMin').value; // нижняя границу weight
+  const maxweightInput = document.getElementById('btnMax').value; // верхняя границу weight
+
+  fruits = fruitsForFilter;
+
+  fruits = fruits.filter((item) => {
+    console.log(item.weight);
+    return (item.weight>=minweightInput && item.weight<=maxweightInput);
   });
 };
 
+/*****************************************************************************/
+/* нажатие кнопки Фильтровать */
 filterButton.addEventListener('click', () => {
   filterFruits();
   display();
 });
 
-/*** СОРТИРОВКА ***/
+/* нажатие кнопки очистка фильтра */
+filterButtonClear.addEventListener('click', () => {
+  fruits = fruitsForFilter;
+  document.getElementById('btnMin').value=0; // нижняя границу weight
+  document.getElementById('btnMax').value = 1000; // верхняя границу weight
+  display();
+});
+
+/******************************** СОРТИРОВКА ********************************/
 
 let sortKind = 'bubbleSort'; // инициализация состояния вида сортировки
 let sortTime = '-'; // инициализация состояния времени сортировки
@@ -149,7 +173,7 @@ const sortAPI = {
   },
 
   quickSort(arr, comparation) {
-    // TODO: допишите функцию быстрой сортировки
+    // TODO: допишите функцию быстрой сортировкиg
   },
 
   // выполняет сортировку и производит замер времени
@@ -166,7 +190,11 @@ sortKindLabel.textContent = sortKind;
 sortTimeLabel.textContent = sortTime;
 
 sortChangeButton.addEventListener('click', () => {
-  // TODO: переключать значение sortKind между 'bubbleSort' / 'quickSort'
+  if (sortKind === 'bubbleSort')
+    sortKind = "quickSort"; 
+  else
+    sortKind = "bubbleSort"; 
+  sortKindLabel.textContent = sortKind;  
 });
 
 sortActionButton.addEventListener('click', () => {
@@ -174,13 +202,23 @@ sortActionButton.addEventListener('click', () => {
   const sort = sortAPI[sortKind];
   sortAPI.startSort(sort, fruits, comparationColor);
   display();
-  // TODO: вывести в sortTimeLabel значение sortTime
+  sortTimeLabel.textContent = sortTime; 
 });
 
-/*** ДОБАВИТЬ ФРУКТ ***/
 
+/********************** ДОБАВИТЬ ФРУКТ ***************************************/
+/* нажатие кнопки Добавить*/
 addActionButton.addEventListener('click', () => {
-  // TODO: создание и добавление нового фрукта в массив fruits
-  // необходимые значения берем из kindInput, colorInput, weightInput
-  display();
+  const kind = document.getElementById('btnKind').value; 
+  const color = document.getElementById('btnColor').value; 
+  const weight = document.getElementById('btnWeight').value;   
+  const index = fruits.length; 
+
+  if (kind == '' || color =='' || weight==''){
+      alert ('Заполните все поля');
+  }
+  else {
+    fruits.push({index, kind, color, weight}); 
+    display();
+  }
 });
