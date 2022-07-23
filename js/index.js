@@ -168,6 +168,35 @@ const comparationColor = (a, b) => {
   return (a.color > b.color)?true:false;
 };
 
+// функция обмена элементов
+function swap(items, firstIndex, secondIndex){
+  const temp = items[firstIndex];
+  items[firstIndex] = items[secondIndex];
+  items[secondIndex] = temp;
+}
+
+// функция разделитель
+function partition(items, left, right) {
+  let pivot = items[Math.floor((right + left) / 2)].color;
+  console.log(pivot)
+  let i = left;
+  let j = right;
+  while (i <= j) {
+      while (items[i].color < pivot) {
+          i++;
+      }
+      while (items[j].color > pivot) {
+          j--;
+      }
+      if (i <= j) {
+          swap(items, i, j);
+          i++;
+          j--;
+      }
+  }
+  return i;
+}
+
 const sortAPI = {
   bubbleSort(arr, comparation) {
     const n = arr.length;
@@ -186,14 +215,29 @@ const sortAPI = {
    }                    
   },
 
-  quickSort(arr, comparation) {
-    // TODO: допишите функцию быстрой сортировки
+  quickSort(arr, left, right) {
+    var index;
+    if (arr.length > 1) {
+      //  left = typeof left != "number" ? 0 : left;
+      //  right = typeof right != "number" ? arr.length - 1 : right;
+        index = partition(arr, left, right);
+        if (left < index - 1) {
+          sortAPI.quickSort(arr, left, index - 1);
+        }
+        if (index < right) {
+          sortAPI.quickSort(arr, index, right);
+        }
+    }
+    return arr;
   },
 
   // выполняет сортировку и производит замер времени
   startSort(sort, arr, comparation) {
     const start = new Date().getTime();
-    sort(arr, comparation);
+    if (sort == this.bubbleSort)
+      sort(arr, comparation);
+    else
+      sort(arr, 0, arr.length-1);
     const end = new Date().getTime();
     sortTime = `${end - start} ms`;
   },
