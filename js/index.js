@@ -163,17 +163,31 @@ filterButtonClear.addEventListener('click', () => {
 let sortKind = 'bubbleSort'; // инициализация состояния вида сортировки
 let sortTime = '-'; // инициализация состояния времени сортировки
 
+/*сортировка возрастанию имени названия цвета*/
 const comparationColor = (a, b) => {
-  // TODO: допишите функцию сравнения двух элементов по цвету
+  return (a.color > b.color)?true:false;
 };
 
 const sortAPI = {
   bubbleSort(arr, comparation) {
-    // TODO: допишите функцию сортировки пузырьком
+    const n = arr.length;
+   // внешняя итерация по элементам
+   for (let i = 0; i < n-1; i++) { 
+       // внутренняя итерация для перестановки элемента в конец массива
+       for (let j = 0; j < n-1-i; j++) { 
+           // сравниваем элементы
+           if (comparation(arr[j], arr[j+1])) { 
+               // делаем обмен элементов
+               let temp = arr[j+1]; 
+               arr[j+1] = arr[j]; 
+               arr[j] = temp; 
+           }
+       }
+   }                    
   },
 
   quickSort(arr, comparation) {
-    // TODO: допишите функцию быстрой сортировкиg
+    // TODO: допишите функцию быстрой сортировки
   },
 
   // выполняет сортировку и производит замер времени
@@ -189,6 +203,7 @@ const sortAPI = {
 sortKindLabel.textContent = sortKind;
 sortTimeLabel.textContent = sortTime;
 
+/* нажатие кнопки Сменить сортировку*/
 sortChangeButton.addEventListener('click', () => {
   if (sortKind === 'bubbleSort')
     sortKind = "quickSort"; 
@@ -197,8 +212,10 @@ sortChangeButton.addEventListener('click', () => {
   sortKindLabel.textContent = sortKind;  
 });
 
+/* нажатие кнопки Сортировки*/
 sortActionButton.addEventListener('click', () => {
-  // TODO: вывести в sortTimeLabel значение 'sorting...'
+  // вывести в sortTimeLabel значение 'sorting...'
+  sortTimeLabel.textContent = 'sorting...'; 
   const sort = sortAPI[sortKind];
   sortAPI.startSort(sort, fruits, comparationColor);
   display();
