@@ -37,6 +37,7 @@ let arrayClass = ["fruit__item fruit_violet",
                   "fruit__item fruit_lightbrown", 
                   "fruit__item fruit_new"
                 ]
+                
 /*****************************************************************************/
 /* отрисовка карточек */
 const display = () => {
@@ -150,6 +151,7 @@ filterButton.addEventListener('click', () => {
   display();
 });
 
+/*****************************************************************************/
 /* нажатие кнопки очистка фильтра */
 filterButtonClear.addEventListener('click', () => {
   fruits = fruitsForFilter;
@@ -163,19 +165,22 @@ filterButtonClear.addEventListener('click', () => {
 let sortKind = 'bubbleSort'; // инициализация состояния вида сортировки
 let sortTime = '-'; // инициализация состояния времени сортировки
 
-/*сортировка возрастанию имени названия цвета*/
+/*****************************************************************************/
+/* сортировка возрастанию имени названия цвета */
 const comparationColor = (a, b) => {
   return (a.color > b.color)?true:false;
 };
 
-// функция обмена элементов
+/*****************************************************************************/
+/* функция обмена элементов */
 function swap(items, firstIndex, secondIndex){
   const temp = items[firstIndex];
   items[firstIndex] = items[secondIndex];
   items[secondIndex] = temp;
 }
 
-// функция разделитель
+/*****************************************************************************/
+/* функция разделитель */
 function partition(items, left, right) {
   let pivot = items[Math.floor((right + left) / 2)].color;
   console.log(pivot)
@@ -197,6 +202,8 @@ function partition(items, left, right) {
   return i;
 }
 
+/*****************************************************************************/
+/* функции сортировки */
 const sortAPI = {
   bubbleSort(arr, comparation) {
     const n = arr.length;
@@ -218,8 +225,6 @@ const sortAPI = {
   quickSort(arr, left, right) {
     var index;
     if (arr.length > 1) {
-      //  left = typeof left != "number" ? 0 : left;
-      //  right = typeof right != "number" ? arr.length - 1 : right;
         index = partition(arr, left, right);
         if (left < index - 1) {
           sortAPI.quickSort(arr, left, index - 1);
@@ -243,11 +248,13 @@ const sortAPI = {
   },
 };
 
-// инициализация полей
+/*****************************************************************************/
+/* инициализация полей */
 sortKindLabel.textContent = sortKind;
 sortTimeLabel.textContent = sortTime;
 
-/* нажатие кнопки Сменить сортировку*/
+/*****************************************************************************/
+/* нажатие кнопки Сменить сортировку */
 sortChangeButton.addEventListener('click', () => {
   if (sortKind === 'bubbleSort')
     sortKind = "quickSort"; 
@@ -256,7 +263,8 @@ sortChangeButton.addEventListener('click', () => {
   sortKindLabel.textContent = sortKind;  
 });
 
-/* нажатие кнопки Сортировки*/
+/*****************************************************************************/
+/* нажатие кнопки Сортировки */
 sortActionButton.addEventListener('click', () => {
   // вывести в sortTimeLabel значение 'sorting...'
   sortTimeLabel.textContent = 'sorting...'; 
@@ -266,9 +274,8 @@ sortActionButton.addEventListener('click', () => {
   sortTimeLabel.textContent = sortTime; 
 });
 
-
 /********************** ДОБАВИТЬ ФРУКТ ***************************************/
-/* нажатие кнопки Добавить*/
+/* нажатие кнопки Добавить */
 addActionButton.addEventListener('click', () => {
   const kind = document.getElementById('btnKind').value; 
   const color = document.getElementById('btnColor').value; 
